@@ -35,10 +35,10 @@ def wishMe():
 
     speak(f"What can I do for you {user}")
 
+
 def takeUserName():
     speak("What shall I call you, sir or ma'am")
     user = takeCommand()
-
     return user
 
 
@@ -61,12 +61,20 @@ def takeCommand():
     return q
 
 
-def sendEmail(to, content):
+def getEmail():
+    speak("Enter your E mail adress")
+    id = input("E-mail: ")
+    speak("Enter your password")
+    password = input("Password: ")
+    return [id, password]
+
+
+def sendEmail(from_id, password, to, content):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
-    server.login('sayan0990basu@gmail.com', 'xyz')
-    server.sendmail('sayan0990basu@gmail.com', to, content)
+    server.login(from_id, password)
+    server.sendmail(from_id, to, content)
     server.close()
 
 
@@ -130,7 +138,7 @@ if __name__ == "__main__":
 
         elif 'play on youtube' in query:
             speak("What should I play")
-            vid = takeCommand()
+            vid = takeCommand().lower()
             speak(f"Playing {vid} on youtube")
             kit.playonyt(vid)
 
@@ -140,8 +148,10 @@ if __name__ == "__main__":
             kit.search(query)
 
         elif 'whats app' in query:
-            speak("Please say the number")
-            number = takeCommand()
+            speak("Please enter the number")
+            number = input("Number: ")
+            if number[0:3] != "+91":
+                number = "+91"+number
             speak("Please say the content to send")
             content = takeCommand()
             kit.sendwhatmsg_instantly(number, content)
@@ -171,10 +181,12 @@ if __name__ == "__main__":
 
         elif 'send email' in query:
             try:
+                credentials = getEmail()
+                speak("Please enter the mail address of the receiver")
+                to = input("Receiver E-mail: ")
                 speak("What should I say?")
                 content = takeCommand()
-                to = "rijuthmenon@gmail.com"
-                sendEmail(to, content)
+                sendEmail(credentials[0], credentials[1], to, content)
                 speak("Email has been sent!")
             except Exception as e:
                 print(e)
@@ -182,17 +194,24 @@ if __name__ == "__main__":
 
         elif 'covid data' in query:
             speak("Which country's covid data would you like to get an info on")
-            country = takeCommand()
+            country = takeCommand().lower()
             data = covidCases()
+            head = ['country', 'active cases', 'number of deaths']
             if "all" in country:
                 for case in data:
+                    i = 0
                     for section in case:
-                        speak(str(section))
+                        print(section)
+                        speak(f"{head[i]}, {section}")
+                        i += 1
             else:
                 for case in data:
-                    if country in case[0]:
+                    if country in case[0].lower():
+                        i = 0
                         for section in case:
-                            speak(str(section))
+                            print(section)
+                            speak(f"{head[i]}, {section}")
+                            i += 1
 
         elif "shutdown" in query:
             os.system("shutdown /s /t 1")
