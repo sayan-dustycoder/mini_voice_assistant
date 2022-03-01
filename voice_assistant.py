@@ -7,6 +7,7 @@ import pywhatkit as kit
 import smtplib
 import requests
 from bs4 import BeautifulSoup
+user = ""
 
 
 def speak(audio):
@@ -23,9 +24,17 @@ if __name__ == "__main__":
     speak("Welcome to C M R I T")
 
 
+def takeUserName():
+    speak("What shall I call you, sir or ma'am")
+    global user
+    user = takeCommand()
+
+
+takeUserName()
+
+
 def wishMe():
     hour = int(datetime.datetime.now().hour)
-    user = takeUserName()
     if 00 >= hour > 12:
         speak(f"Good Morning {user}")
     elif 12 <= hour < 16:
@@ -34,12 +43,6 @@ def wishMe():
         speak(f"Good evening {user}")
 
     speak(f"What can I do for you {user}")
-
-
-def takeUserName():
-    speak("What shall I call you, sir or ma'am")
-    user = takeCommand()
-    return user
 
 
 def takeCommand():
@@ -62,9 +65,9 @@ def takeCommand():
 
 
 def getEmail():
-    speak("Enter your E mail adress")
+    speak(f"Please enter your E mail address, {user}")
     id = input("E-mail: ")
-    speak("Enter your password")
+    speak("Please enter your password")
     password = input("Password: ")
     return [id, password]
 
@@ -136,8 +139,8 @@ if __name__ == "__main__":
             print(results)
             speak(results)
 
-        elif 'play on youtube' in query:
-            speak("What should I play")
+        elif 'youtube' in query:
+            speak(f"What should I play {user}")
             vid = takeCommand().lower()
             speak(f"Playing {vid} on youtube")
             kit.playonyt(vid)
@@ -147,12 +150,12 @@ if __name__ == "__main__":
             speak(f"Searching {query} on google")
             kit.search(query)
 
-        elif 'whats app' in query:
-            speak("Please enter the number")
+        elif 'whatsapp' in query:
+            speak(f"Please enter the number you want to message, {user}")
             number = input("Number: ")
             if number[0:3] != "+91":
                 number = "+91"+number
-            speak("Please say the content to send")
+            speak(f"Please say the content to send, {user}")
             content = takeCommand()
             kit.sendwhatmsg_instantly(number, content)
 
@@ -193,7 +196,7 @@ if __name__ == "__main__":
                 speak("Sorry my friend, I am not able to send this email")
 
         elif 'covid data' in query:
-            speak("Which country's covid data would you like to get an info on")
+            speak(f"Which country's covid data would you like to get an info on, {user}?")
             country = takeCommand().lower()
             data = covidCases()
             head = ['country', 'active cases', 'number of deaths']
