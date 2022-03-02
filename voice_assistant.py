@@ -1,5 +1,6 @@
 import pyttsx3
 import datetime
+import webbrowser
 import speech_recognition as sr
 import wikipedia
 import os
@@ -7,7 +8,10 @@ import pywhatkit as kit
 import smtplib
 import requests
 from bs4 import BeautifulSoup
+
 user = ""
+id = ""
+password = ""
 
 
 def speak(audio):
@@ -18,7 +22,6 @@ def speak(audio):
 engine = pyttsx3.init('sapi5')
 voice = engine.getProperty('voices')  # getting details of current voice
 engine.setProperty('voice', voice[0].id)
-
 
 if __name__ == "__main__":
     speak("Welcome to C M R I T")
@@ -65,6 +68,7 @@ def takeCommand():
 
 
 def getEmail():
+    global id, password
     speak(f"Please enter your E mail address, {user}")
     id = input("E-mail: ")
     speak("Please enter your password")
@@ -154,7 +158,7 @@ if __name__ == "__main__":
             speak(f"Please enter the number you want to message, {user}")
             number = input("Number: ")
             if number[0:3] != "+91":
-                number = "+91"+number
+                number = "+91" + number
             speak(f"Please say the content to send, {user}")
             content = takeCommand()
             kit.sendwhatmsg_instantly(number, content)
@@ -207,12 +211,18 @@ if __name__ == "__main__":
                         print(section)
                         speak(f"{head[i]}, {section}")
                         i += 1
+
+            elif "website" in query:
+                speak(f"Which website would you like to open, {user}?")
+                website = takeCommand()
+                webbrowser.open(f'www.{website}')
+
             else:
                 for case in data:
                     if country in case[0].lower():
                         i = 0
                         for section in case:
-                            print(section)
+                            print(head[i], ":", section)
                             speak(f"{head[i]}, {section}")
                             i += 1
 
